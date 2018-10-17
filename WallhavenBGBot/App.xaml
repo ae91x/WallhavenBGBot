@@ -1,0 +1,10 @@
+﻿<Application x:Class="WallhavenBGBot.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:WallhavenBGBot"
+             xmlns:models="clr-namespace:WallhavenBGBot.Models"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+        <models:BGBotViewModel x:Key="BGBotViewModel" />
+    </Application.Resources>
+</Application>

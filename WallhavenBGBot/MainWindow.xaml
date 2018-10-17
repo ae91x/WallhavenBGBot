@@ -1,0 +1,91 @@
+﻿<Window x:Class="WallhavenBGBot.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WallhavenBGBot"
+        mc:Ignorable="d"
+        Title="Wallhaven BG Bot" Height="486.555" Width="394.118">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <StackPanel Grid.Row="0" Grid.Column="0" Margin="5,0">
+            <Label Content="Username" />
+            <TextBox Text="{ Binding Username }" />
+        </StackPanel>
+        <StackPanel Grid.Row="0" Grid.Column="1" Margin="5,0">
+            <Label Content="Password" />
+            <TextBox Text="{ Binding Password }" />
+        </StackPanel>
+        <StackPanel Grid.Row="1" Grid.ColumnSpan="2" Margin="5,0">
+            <Label Content="Keywords (space-separated)" />
+            <TextBox Text="{ Binding Keywords }" />
+        </StackPanel>
+        <StackPanel Grid.Row="2" Grid.ColumnSpan="2" Margin="5,0">
+            <Label Content="Categories" />
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <ToggleButton IsChecked="{ Binding CategoryGeneral }">General</ToggleButton>
+                <ToggleButton IsChecked="{ Binding CategoryAnime }" BorderThickness="0,1" Grid.Column="1">Anime</ToggleButton>
+                <ToggleButton IsChecked="{ Binding CategoryPeople }" Grid.Column="2">People</ToggleButton>
+            </Grid>
+        </StackPanel>
+        <StackPanel Grid.Row="3" Grid.ColumnSpan="2" Margin="5,0">
+            <Label Content="Purity" />
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <ToggleButton IsChecked="{ Binding PuritySFW }">SFW</ToggleButton>
+                <ToggleButton IsChecked="{ Binding PuritySketchy }" BorderThickness="0,1" Grid.Column="1">Sketchy</ToggleButton>
+                <ToggleButton IsChecked="{ Binding PurityNSFW }" Grid.Column="2">NSFW</ToggleButton>
+            </Grid>
+        </StackPanel>
+        <StackPanel Grid.Row="4" Margin="5,0">
+            <Label Content="Resolution" />
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <TextBox TextAlignment="Right" VerticalAlignment="Center" Text="{ Binding Width }" />
+                <Label Grid.Column="1" Content="x" VerticalAlignment="Center" VerticalContentAlignment="Top" />
+                <TextBox TextAlignment="Left" VerticalAlignment="Center" Grid.Column="2" Text="{ Binding Height }" />
+            </Grid>
+        </StackPanel>
+        <StackPanel Grid.Row="4" Grid.Column="1" Margin="5,0">
+            <Label Content="Sorting" />
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <ComboBox ItemsSource="{ Binding Sortings }" SelectedValue="{ Binding SelectedSort }" />
+                <Button Grid.Column="1" Content="{ Binding SelectedOrder }" Click="BtnOrderClicked" Margin="5,0,0,0" />
+            </Grid>
+        </StackPanel>
+        <StackPanel Grid.Row="5" Margin="5,0">
+            <Button Content="Set background now" Click="BtnSetBackgroundClicked" />
+        </StackPanel>
+    </Grid>
+</Window>
