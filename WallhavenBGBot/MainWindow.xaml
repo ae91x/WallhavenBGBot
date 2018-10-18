@@ -14,6 +14,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
@@ -81,11 +82,14 @@
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
                 <ComboBox ItemsSource="{ Binding Sortings }" SelectedValue="{ Binding SelectedSort }" />
-                <Button Grid.Column="1" Content="{ Binding SelectedOrder }" Click="BtnOrderClicked" Margin="5,0,0,0" />
+                <ComboBox Grid.Column="1" ItemsSource="{ Binding Orders }" Margin="5,0,0,0" SelectedValue="{ Binding SelectedOrder }" />
             </Grid>
         </StackPanel>
-        <StackPanel Grid.Row="5" Margin="5,0">
-            <Button Content="Set background now" Click="BtnSetBackgroundClicked" />
+        <StackPanel Grid.Row="5" Grid.ColumnSpan="2" Margin="5,0">
+            <Label Content="Minutes between switches (set 0 for only on startup)" />
+            <TextBox Text="{ Binding Interval }" />
         </StackPanel>
+        <Button Grid.Row="6" Margin="5" Content="Save Configuration" Click="BtnSaveConfigClicked" />
+        <Button Grid.Row="6" Grid.Column="1" Margin="5" Content="Set background now" Click="BtnSetBackgroundClicked" />
     </Grid>
 </Window>

@@ -25,11 +25,11 @@ namespace WallhavenBGBot.Models
         [ConfigurationProperty("Password", DefaultValue = "")]
         public string Password { get => (string)this["Password"]; set { this["Password"] = value; OnPropertyChanged("Password"); } }
 
-        [ConfigurationProperty("Width", DefaultValue = 1920, IsRequired = true)]
-        public int Width { get => (int)this["Width"]; set { this["Width"] = value; OnPropertyChanged("Width"); } }
+        [ConfigurationProperty("Width", DefaultValue = (ushort)1920, IsRequired = true)]
+        public ushort Width { get => (ushort)this["Width"]; set { this["Width"] = value; OnPropertyChanged("Width"); } }
 
-        [ConfigurationProperty("Height", DefaultValue = 1080, IsRequired = true)]
-        public int Height { get => (int)this["Height"]; set { this["Height"] = value; OnPropertyChanged("Height"); } }
+        [ConfigurationProperty("Height", DefaultValue = (ushort)1080, IsRequired = true)]
+        public ushort Height { get => (ushort)this["Height"]; set { this["Height"] = value; OnPropertyChanged("Height"); } }
 
         [ConfigurationProperty("SelectedSort", DefaultValue = SortMethod.Relevance, IsRequired = true)]
         public SortMethod SelectedSort { get => (SortMethod)this["SelectedSort"]; set { this["SelectedSort"] = value; OnPropertyChanged("SelectedSort"); } }
@@ -47,6 +47,10 @@ namespace WallhavenBGBot.Models
         public string Keywords { get => (string)this["Keywords"]; set { this["Keywords"] = value; OnPropertyChanged("Keywords"); } }
 
         public SortMethod[] Sortings { get => Enum.GetValues(typeof(WallhavenAPI.SortMethod)).Cast<WallhavenAPI.SortMethod>().Select(x => x).ToArray(); }
+        public SortOrder[] Orders { get => Enum.GetValues(typeof(WallhavenAPI.SortOrder)).Cast<WallhavenAPI.SortOrder>().Select(x => x).ToArray(); }
+
+        [ConfigurationProperty("Interval", DefaultValue = (ushort)60, IsRequired = true)]
+        public ushort Interval { get => (ushort)this["Interval"]; set { this["Interval"] = value; OnPropertyChanged("Interval"); } }
 
         public bool CategoryGeneral { get => (Categories & Category.General) == Category.General; set { Categories = value ? Category.General | Categories : Categories & ~Category.General; OnPropertyChanged("CategoryGeneral"); } }
         public bool CategoryAnime { get => (Categories & Category.Anime) == Category.Anime; set { Categories = value ? Category.Anime | Categories : Categories & ~Category.Anime; OnPropertyChanged("CategoryAnime"); } }
@@ -76,6 +80,20 @@ namespace WallhavenBGBot.Models
             };
 
             return query;
+        }
+
+        public static List<string> GetErrors()
+        {
+            var errors = new List<string>();
+
+            if ((byte)ViewModel.Categories == 0)
+                errors.Add("At least one category must be chosen");
+            if ((byte)ViewModel.Purity == 0)
+                errors.Add("At least one purity must be chosen");
+            if (ViewModel.Width == 0 || ViewModel.Height == 0)
+                errors.Add("A resolution must be defined");
+
+            return errors;
         }
     }
 }

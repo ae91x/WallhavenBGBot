@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -24,6 +25,8 @@ namespace WallhavenBGBot
     public partial class MainWindow : Window
     {
         private BGBotViewModel _viewModel = BGBotViewModel.ViewModel;
+        private CancellationTokenSource _tokenSource;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -36,9 +39,21 @@ namespace WallhavenBGBot
             _viewModel.SelectedOrder = _viewModel.SelectedOrder == WallhavenAPI.SortOrder.Asc ? WallhavenAPI.SortOrder.Desc : WallhavenAPI.SortOrder.Asc;
         }
 
-        protected void BtnSetBackgroundClicked(object sender, EventArgs e)
+        private Task StartSwitchLoop(TimeSpan interval, CancellationToken cancellationToken)
         {
-            BGBotViewModel.Save();
+            return Task.Run(async () =>
+            {
+                while(true)
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
+                    await SwitchBackground();
+                    await Task.Delay(interval, cancellationToken);
+                }
+            });
+        }
+
+        private async Task SwitchBackground()
+        {
             var query = BGBotViewModel.GetQuery();
 
             if (!WallhavenAPI.API.IsLoggedIn())
@@ -56,6 +71,39 @@ namespace WallhavenBGBot
 
                 BackgroundHelper.UpdateBackground(filepath);
             }
+        }
+
+        protected async void BtnSaveConfigClicked(object sender, EventArgs e)
+        {
+            var errors = BGBotViewModel.GetErrors();
+            if (errors.Count > 0)
+            {
+                MessageBox.Show(String.Join("\n", errors), "Configuration error");
+                return;
+            }
+
+            BGBotViewModel.Save();
+            if (_viewModel.Interval > 0)
+            {
+                if (_tokenSource != null)
+                    _tokenSource.Cancel();
+
+                _tokenSource = new CancellationTokenSource();
+                await StartSwitchLoop(TimeSpan.FromMinutes(_viewModel.Interval), _tokenSource.Token);
+            }
+        }
+
+        protected async void BtnSetBackgroundClicked(object sender, EventArgs e)
+        {
+            var errors = BGBotViewModel.GetErrors();
+            if (errors.Count > 0)
+            {
+                MessageBox.Show(String.Join("\n", errors), "Configuration error");
+                return;
+            }
+
+            BGBotViewModel.Save();
+            await SwitchBackground();
         }
     }
 }
