@@ -1,96 +1,126 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Configuration;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Runtime.CompilerServices;
 using WallhavenAPI;
+using WallhavenBGBot.ConfigurationSections;
 
 namespace WallhavenBGBot.Models
 {
-    public class BGBotViewModel : ConfigurationSection, INotifyPropertyChanged
+    public class BGBotViewModel : INotifyPropertyChanged
     {
-        private static Configuration _cfg = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-        public static BGBotViewModel ViewModel { get; } = _cfg.Sections["BGBotViewModel"] as BGBotViewModel;
+        private WallhavenBGBotConfiguration _cfgSection;
 
-        public static void Save()
+        public BGBotViewModel()
         {
-            _cfg.Save();
+            _cfgSection = WallhavenBGBotConfiguration.GetInstance();
+
+            Username = _cfgSection.Username;
+            Password = _cfgSection.Password;
+            Width = _cfgSection.Width;
+            Height = _cfgSection.Height;
+            SelectedSort = _cfgSection.SelectedSort;
+            SelectedOrder = _cfgSection.SelectedOrder;
+            Keywords = _cfgSection.Keywords;
+            Interval = _cfgSection.Interval;
+            Categories = _cfgSection.Categories;
+            Purities = _cfgSection.Purities;
+            AutomaticallyCleanAppDataFolder = _cfgSection.AutomaticallyCleanAppDataFolder;
         }
 
-        [ConfigurationProperty("Username", DefaultValue = "")]
-        public string Username { get => (string)this["Username"]; set { this["Username"] = value; OnPropertyChanged("Username"); } }
+        public void Save()
+        {
+            _cfgSection.Username = Username;
+            _cfgSection.Password = Password;
+            _cfgSection.Width = Width;
+            _cfgSection.Height = Height;
+            _cfgSection.SelectedSort = SelectedSort;
+            _cfgSection.SelectedOrder = SelectedOrder;
+            _cfgSection.Keywords = Keywords;
+            _cfgSection.Interval = Interval;
+            _cfgSection.Categories = Categories;
+            _cfgSection.Purities = Purities;
+            _cfgSection.AutomaticallyCleanAppDataFolder = AutomaticallyCleanAppDataFolder;
 
-        [ConfigurationProperty("Password", DefaultValue = "")]
-        public string Password { get => (string)this["Password"]; set { this["Password"] = value; OnPropertyChanged("Password"); } }
+            _cfgSection.Save();
+        }
 
-        [ConfigurationProperty("Width", DefaultValue = (ushort)1920, IsRequired = true)]
-        public ushort Width { get => (ushort)this["Width"]; set { this["Width"] = value; OnPropertyChanged("Width"); } }
+        private string _username;
+        public string Username { get => _username; set { _username = value; OnPropertyChanged(); } }
 
-        [ConfigurationProperty("Height", DefaultValue = (ushort)1080, IsRequired = true)]
-        public ushort Height { get => (ushort)this["Height"]; set { this["Height"] = value; OnPropertyChanged("Height"); } }
+        private string _password;
+        public string Password { get => _password; set { _password = value; OnPropertyChanged(); } }
 
-        [ConfigurationProperty("SelectedSort", DefaultValue = SortMethod.Relevance, IsRequired = true)]
-        public SortMethod SelectedSort { get => (SortMethod)this["SelectedSort"]; set { this["SelectedSort"] = value; OnPropertyChanged("SelectedSort"); } }
+        private ushort _width;
+        public ushort Width { get => _width; set { _width = value; OnPropertyChanged(); } }
 
-        [ConfigurationProperty("SelectedOrder", DefaultValue = SortOrder.Desc, IsRequired = true)]
-        public SortOrder SelectedOrder { get => (SortOrder)this["SelectedOrder"]; set { this["SelectedOrder"] = value; OnPropertyChanged("SelectedOrder"); } }
+        private ushort _height;
+        public ushort Height { get => _height; set { _height = value; OnPropertyChanged(); } }
 
-        [ConfigurationProperty("Categories", DefaultValue = Category.General | Category.People, IsRequired = true)]
-        public Category Categories { get => (Category)this["Categories"]; set { this["Categories"] = value; OnPropertyChanged("Categories"); } }
+        private SortMethod _selectedSort;
+        public SortMethod SelectedSort { get => _selectedSort; set { _selectedSort = value; OnPropertyChanged(); } }
 
-        [ConfigurationProperty("Purity", DefaultValue = Purity.SFW, IsRequired = true)]
-        public Purity Purity { get => (Purity)this["Purity"]; set { this["Purity"] = value; OnPropertyChanged("Purity"); } }
+        private SortOrder _selectedOrder;
+        public SortOrder SelectedOrder { get => _selectedOrder; set { _selectedOrder = value; OnPropertyChanged(); } }
 
-        [ConfigurationProperty("Keywords", DefaultValue = "")]
-        public string Keywords { get => (string)this["Keywords"]; set { this["Keywords"] = value; OnPropertyChanged("Keywords"); } }
+        private string _keywords;
+        public string Keywords { get => _keywords; set { _keywords = value; OnPropertyChanged(); } }
 
-        public SortMethod[] Sortings { get => Enum.GetValues(typeof(WallhavenAPI.SortMethod)).Cast<WallhavenAPI.SortMethod>().Select(x => x).ToArray(); }
-        public SortOrder[] Orders { get => Enum.GetValues(typeof(WallhavenAPI.SortOrder)).Cast<WallhavenAPI.SortOrder>().Select(x => x).ToArray(); }
+        private ushort _interval;
+        public ushort Interval { get => _interval; set { _interval = value; OnPropertyChanged(); } }
 
-        [ConfigurationProperty("Interval", DefaultValue = (ushort)60, IsRequired = true)]
-        public ushort Interval { get => (ushort)this["Interval"]; set { this["Interval"] = value; OnPropertyChanged("Interval"); } }
+        private bool _automaticallyCleanAppDataFolder;
+        public bool AutomaticallyCleanAppDataFolder { get => _automaticallyCleanAppDataFolder; set { _automaticallyCleanAppDataFolder = value; OnPropertyChanged(); } }
 
-        public bool CategoryGeneral { get => (Categories & Category.General) == Category.General; set { Categories = value ? Category.General | Categories : Categories & ~Category.General; OnPropertyChanged("CategoryGeneral"); } }
-        public bool CategoryAnime { get => (Categories & Category.Anime) == Category.Anime; set { Categories = value ? Category.Anime | Categories : Categories & ~Category.Anime; OnPropertyChanged("CategoryAnime"); } }
-        public bool CategoryPeople { get => (Categories & Category.People) == Category.People; set { Categories = value ? Category.People | Categories : Categories & ~Category.People; OnPropertyChanged("CategoryPeople"); } }
+        private Category _categories;
+        public Category Categories { get => _categories; set { _categories = value; OnPropertyChanged("CategoryGeneral"); OnPropertyChanged("CategoryAnime"); OnPropertyChanged("CategoryPeople"); } }
 
-        public bool PuritySFW { get => (Purity & Purity.SFW) == Purity.SFW; set { Purity = value ? Purity.SFW | Purity : Purity & ~Purity.SFW; OnPropertyChanged("PuritySFW"); } }
-        public bool PuritySketchy { get => (Purity & Purity.Sketchy) == Purity.Sketchy; set { Purity = value ? Purity.Sketchy | Purity : Purity & ~Purity.Sketchy; OnPropertyChanged("PuritySketchy"); } }
-        public bool PurityNSFW { get => (Purity & Purity.NSFW) == Purity.NSFW; set { Purity = value ? Purity.NSFW | Purity : Purity & ~Purity.NSFW; OnPropertyChanged("PurityNSFW"); } }
+        public bool CategoryGeneral { get => (_categories & Category.General) == Category.General; set { _categories = value ? Category.General | _categories : _categories & ~Category.General; OnPropertyChanged(); } }
+        public bool CategoryAnime { get => (_categories & Category.Anime) == Category.Anime; set { _categories = value ? Category.Anime | _categories : _categories & ~Category.Anime; OnPropertyChanged(); } }
+        public bool CategoryPeople { get => (_categories & Category.People) == Category.People; set { _categories = value ? Category.People | _categories : _categories & ~Category.People; OnPropertyChanged(); } }
+
+        private Purity _purities;
+        public Purity Purities { get => _purities; set { _purities = value; OnPropertyChanged("PuritySFW"); OnPropertyChanged("PuritySketchy"); OnPropertyChanged("PurityNSFW"); } }
+
+        public bool PuritySFW { get => (_purities & Purity.SFW) == Purity.SFW; set { _purities = value ? Purity.SFW | _purities : _purities & ~Purity.SFW; OnPropertyChanged(); } }
+        public bool PuritySketchy { get => (_purities & Purity.Sketchy) == Purity.Sketchy; set { _purities = value ? Purity.Sketchy | _purities : _purities & ~Purity.Sketchy; OnPropertyChanged(); } }
+        public bool PurityNSFW { get => (_purities & Purity.NSFW) == Purity.NSFW; set { _purities = value ? Purity.NSFW | _purities : _purities & ~Purity.NSFW; OnPropertyChanged(); } }
+
+        public SortMethod[] Sortings { get => Enum.GetValues(typeof(SortMethod)).Cast<SortMethod>().Select(x => x).ToArray(); }
+        public SortOrder[] Orders { get => Enum.GetValues(typeof(SortOrder)).Cast<SortOrder>().Select(x => x).ToArray(); }
 
         public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged(string name)
+        protected void OnPropertyChanged([CallerMemberName]string name = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
-        public static Query GetQuery()
+        public Query GetQuery()
         {
             var query = new Query() {
-                Categories = ViewModel.Categories,
+                Categories = _categories,
                 ExactResolution = true,
-                Keyword = ViewModel.Keywords,
-                Sort = ViewModel.SelectedSort,
-                Order = ViewModel.SelectedOrder,
+                Keyword = Keywords,
+                Sort = SelectedSort,
+                Order = SelectedOrder,
                 Page = 1,
-                Purities = ViewModel.Purity,
-                Resolutions = new string[] { $"{ViewModel.Width}x{ViewModel.Height}" }
+                Purities = _purities,
+                Resolutions = new string[] { $"{Width}x{Height}" }
             };
 
             return query;
         }
 
-        public static List<string> GetErrors()
+        public List<string> GetErrors()
         {
             var errors = new List<string>();
 
-            if ((byte)ViewModel.Categories == 0)
+            if ((byte)_categories == 0)
                 errors.Add("At least one category must be chosen");
-            if ((byte)ViewModel.Purity == 0)
+            if ((byte)_purities == 0)
                 errors.Add("At least one purity must be chosen");
-            if (ViewModel.Width == 0 || ViewModel.Height == 0)
+            if (Width == 0 || Height == 0)
                 errors.Add("A resolution must be defined");
 
             return errors;

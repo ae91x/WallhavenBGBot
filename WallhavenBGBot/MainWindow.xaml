@@ -3,10 +3,10 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:WallhavenBGBot"
+        DataContext="{ StaticResource BGBotViewModel }"
         mc:Ignorable="d"
-        Title="Wallhaven BG Bot" Height="486.555" Width="394.118">
-    <Grid>
+        Title="Wallhaven BG Bot" Height="350" Width="350">
+    <Grid Margin="5,0">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
@@ -18,21 +18,22 @@
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="5" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
-        <StackPanel Grid.Row="0" Grid.Column="0" Margin="5,0">
+        <StackPanel Grid.Row="0" Grid.Column="0">
             <Label Content="Username" />
             <TextBox Text="{ Binding Username }" />
         </StackPanel>
-        <StackPanel Grid.Row="0" Grid.Column="1" Margin="5,0">
+        <StackPanel Grid.Row="0" Grid.Column="2">
             <Label Content="Password" />
             <TextBox Text="{ Binding Password }" />
         </StackPanel>
-        <StackPanel Grid.Row="1" Grid.ColumnSpan="2" Margin="5,0">
+        <StackPanel Grid.Row="1" Grid.ColumnSpan="3">
             <Label Content="Keywords (space-separated)" />
             <TextBox Text="{ Binding Keywords }" />
         </StackPanel>
-        <StackPanel Grid.Row="2" Grid.ColumnSpan="2" Margin="5,0">
+        <StackPanel Grid.Row="2">
             <Label Content="Categories" />
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -45,7 +46,7 @@
                 <ToggleButton IsChecked="{ Binding CategoryPeople }" Grid.Column="2">People</ToggleButton>
             </Grid>
         </StackPanel>
-        <StackPanel Grid.Row="3" Grid.ColumnSpan="2" Margin="5,0">
+        <StackPanel Grid.Row="2" Grid.Column="3">
             <Label Content="Purity" />
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -58,7 +59,7 @@
                 <ToggleButton IsChecked="{ Binding PurityNSFW }" Grid.Column="2">NSFW</ToggleButton>
             </Grid>
         </StackPanel>
-        <StackPanel Grid.Row="4" Margin="5,0">
+        <StackPanel Grid.Row="4">
             <Label Content="Resolution" />
             <Grid>
                 <Grid.RowDefinitions>
@@ -74,7 +75,7 @@
                 <TextBox TextAlignment="Left" VerticalAlignment="Center" Grid.Column="2" Text="{ Binding Height }" />
             </Grid>
         </StackPanel>
-        <StackPanel Grid.Row="4" Grid.Column="1" Margin="5,0">
+        <StackPanel Grid.Row="4" Grid.Column="2">
             <Label Content="Sorting" />
             <Grid>
                 <Grid.ColumnDefinitions>
@@ -85,11 +86,15 @@
                 <ComboBox Grid.Column="1" ItemsSource="{ Binding Orders }" Margin="5,0,0,0" SelectedValue="{ Binding SelectedOrder }" />
             </Grid>
         </StackPanel>
-        <StackPanel Grid.Row="5" Grid.ColumnSpan="2" Margin="5,0">
-            <Label Content="Minutes between switches (set 0 for only on startup)" />
+        <StackPanel Grid.Row="5">
+            <Label Content="Switch interval" />
             <TextBox Text="{ Binding Interval }" />
         </StackPanel>
+        <StackPanel Grid.Row="5" Grid.Column="2">
+            <Label Content="Autodelete old files" />
+            <CheckBox IsChecked="{ Binding AutomaticallyCleanAppDataFolder }" />
+        </StackPanel>
         <Button Grid.Row="6" Margin="5" Content="Save Configuration" Click="BtnSaveConfigClicked" />
-        <Button Grid.Row="6" Grid.Column="1" Margin="5" Content="Set background now" Click="BtnSetBackgroundClicked" />
+        <Button Grid.Row="6" Grid.Column="2" Margin="5" Content="Set background now" Click="BtnSetBackgroundClicked" />
     </Grid>
 </Window>
