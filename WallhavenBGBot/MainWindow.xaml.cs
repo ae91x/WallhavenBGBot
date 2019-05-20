@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -15,15 +16,26 @@ namespace WallhavenBGBot
     /// </summary>
     public partial class MainWindow : Window
     {
-        private static BGBotViewModel _viewModel;
-        private System.Timers.Timer _timer;
         private static object _lockObject = new object();
+
+        private BGBotViewModel _viewModel;
+        private System.Timers.Timer _timer;
+        private System.Windows.Forms.NotifyIcon _notifyIcon;
 
         public MainWindow()
         {
-            InitializeComponent();
+            _notifyIcon = new System.Windows.Forms.NotifyIcon() {
+                Icon = System.Drawing.Icon.ExtractAssociatedIcon(Assembly.GetExecutingAssembly().Location),
+                Visible = true,
+            };
 
+            _notifyIcon.Click += (sender, e) => { Show(); WindowState = WindowState.Normal; };
+
+            InitializeComponent();
             _viewModel = (BGBotViewModel)DataContext;
+
+            if (_viewModel.Interval > 0)
+                StartSwitchLoop(TimeSpan.FromMinutes(_viewModel.Interval));
         }
 
         private void StartSwitchLoop(TimeSpan interval)
@@ -88,9 +100,7 @@ namespace WallhavenBGBot
 
             _viewModel.Save();
             if (_viewModel.Interval > 0)
-            {
                 StartSwitchLoop(TimeSpan.FromMinutes(_viewModel.Interval));
-            }
         }
 
         protected void BtnSetBackgroundClicked(object sender, EventArgs e)
@@ -104,6 +114,14 @@ namespace WallhavenBGBot
 
             _viewModel.Save();
             SwitchBackground();
+        }
+
+        protected override void OnStateChanged(EventArgs e)
+        {
+            if (WindowState == WindowState.Minimized)
+                Hide();
+
+            base.OnStateChanged(e);
         }
     }
 }
