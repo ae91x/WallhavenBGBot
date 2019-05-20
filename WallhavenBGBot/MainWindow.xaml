@@ -87,7 +87,7 @@
             </Grid>
         </StackPanel>
         <StackPanel Grid.Row="5">
-            <Label Content="Switch interval" />
+            <Label Content="Switch interval (0 = manual)" />
             <TextBox Text="{ Binding Interval }" />
         </StackPanel>
         <StackPanel Grid.Row="5" Grid.Column="2">

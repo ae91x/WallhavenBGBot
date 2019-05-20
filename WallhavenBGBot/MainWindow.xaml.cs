@@ -51,6 +51,7 @@ namespace WallhavenBGBot
             {
                 SwitchBackground();
             };
+            _timer.Start();
         }
 
         private void SwitchBackground()
@@ -59,10 +60,13 @@ namespace WallhavenBGBot
             {
                 var query = _viewModel.GetQuery();
 
-                if (!WallhavenAPI.API.IsLoggedIn())
+                if (!WallhavenAPI.API.IsLoggedIn() && !String.IsNullOrEmpty(_viewModel.Username) && !String.IsNullOrEmpty(_viewModel.Password))
                 {
-                    if (!String.IsNullOrEmpty(_viewModel.Username) && !String.IsNullOrEmpty(_viewModel.Password))
-                        WallhavenAPI.API.Login(_viewModel.Username, _viewModel.Password);
+                    if (!WallhavenAPI.API.Login(_viewModel.Username, _viewModel.Password))
+                    {
+                        MessageBox.Show("Couldn't log in with the credentials supplied, please try again, or clear the credential boxes.");
+                        return;
+                    }
                 }
 
                 var results = WallhavenAPI.API.Search(query);
