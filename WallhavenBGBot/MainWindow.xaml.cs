@@ -105,6 +105,11 @@ namespace WallhavenBGBot
             _viewModel.Save();
             if (_viewModel.Interval > 0)
                 StartSwitchLoop(TimeSpan.FromMinutes(_viewModel.Interval));
+            else if (_timer != null)
+            {
+                _timer.Stop();
+                _timer = null;
+            }
         }
 
         protected void BtnSetBackgroundClicked(object sender, EventArgs e)
